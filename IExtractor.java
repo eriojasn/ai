@@ -1,5 +1,8 @@
 package ravensproject;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 public interface IExtractor {
-	public Object Extract(Level level);
+	public Set<String> GetAllAttributes();
 }

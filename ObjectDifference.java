@@ -30,7 +30,7 @@ public class ObjectDifference implements IDifference {
 				difference--;
 
 		System.out.println("The difference between RavensObject " + compared1.getName() 
-				+ "and RavensObject " + compared2.getName() + " is " + difference);
+				+ " and RavensObject " + compared2.getName() + " is " + difference);
 		
 		return difference;
 	}

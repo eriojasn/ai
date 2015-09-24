@@ -20,8 +20,11 @@ public class Agent {
     	 * and not diagonal to each other. Should find an algorithm but since
     	 * this is 2x2 going to hard code.
     	 */
-    	Extractor extractor = new Extractor(problem);
-    	Set<String> allAttributes = (Set<String>)extractor.Extract(Level.ATTRIBUTES);
+    	ProblemExtractor extractor = new ProblemExtractor(problem);
+    	Set<String> allAttributes = extractor.GetAllAttributes();
+    	ArrayList<RavensFigure> problemFigures =  extractor.GetProblemFigures();
+    	Mapper mapper = new Mapper(problemFigures.get(0), problemFigures.get(1), allAttributes);
+    	mapper.Map();
     	
         return 1;
     }
