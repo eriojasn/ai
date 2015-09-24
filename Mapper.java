@@ -1,6 +1,7 @@
 package ravensproject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 public class Mapper implements IMapper {
@@ -19,12 +20,12 @@ public class Mapper implements IMapper {
 		this.leftFigureExtractor = new FigureExtractor(this.leftFigure);
 		this.rightFigureExtractor = new FigureExtractor(this.rightFigure);
 		this.attributes = attributes;
-		//this.Map();
+		this.Map();
 	}
 
 	@Override
 	public ArrayList<Pair<RavensObject, RavensObject>> Map() {
-		map = new ArrayList<Pair<RavensObject,RavensObject>>();
+		map = new ArrayList<Pair<RavensObject, RavensObject>>();
 		
 		ArrayList<RavensObject> leftObjects = leftFigureExtractor.GetAllObjects();
 		ArrayList<RavensObject> rightObjects = rightFigureExtractor.GetAllObjects();
@@ -33,6 +34,39 @@ public class Mapper implements IMapper {
 		for (RavensObject leftObject : leftObjects)
 			for (RavensObject rightObject : rightObjects)
 				differences.add(new ObjectDifference(leftObject, rightObject, attributes));
+		
+		Collections.sort(differences, new ObjectDifferenceComparator());
+		
+		boolean found;
+		for (ObjectDifference difference : differences)
+		{
+			found = false;
+			for (Pair<RavensObject, RavensObject> pair : map)
+				if (pair.getLeft().equals(difference.compared1) || pair.getRight().equals(difference.compared2))
+					found = true;
+			
+			if(!found)
+				map.add(new Pair<RavensObject, RavensObject>(difference.compared1, difference.compared2));
+		}
+		
+		for (ObjectDifference difference : differences)
+		{
+			found = false;
+			for (Pair<RavensObject, RavensObject> pair : map)
+				if (pair.getLeft().equals(difference.compared1))
+					found = true;
+			
+			if (!found)
+				map.add(new Pair<RavensObject, RavensObject>(difference.compared1, null));
+			
+			found = false;
+			for (Pair<RavensObject, RavensObject> pair : map)
+				if (pair.getRight().equals(difference.compared2))
+					found = true;
+			
+			if (!found)
+				map.add(new Pair<RavensObject, RavensObject>(null, difference.compared2));
+		}
 
 		return map;
 	}

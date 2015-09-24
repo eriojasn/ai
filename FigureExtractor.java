@@ -6,8 +6,7 @@ import java.util.Set;
 public class FigureExtractor implements IFigureExtractor {
 	private RavensFigure figure;
 	
-	public FigureExtractor(RavensFigure figure)
-	{
+	public FigureExtractor(RavensFigure figure) {
 		this.figure = figure;
 	}
 
@@ -23,5 +22,4 @@ public class FigureExtractor implements IFigureExtractor {
 
 		return allObjects;
 	}
-
 }
