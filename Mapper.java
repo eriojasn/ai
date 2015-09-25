@@ -20,7 +20,6 @@ public class Mapper implements IMapper {
 		this.leftFigureExtractor = new FigureExtractor(this.leftFigure);
 		this.rightFigureExtractor = new FigureExtractor(this.rightFigure);
 		this.attributes = attributes;
-		this.Map();
 	}
 
 	@Override
@@ -53,7 +52,7 @@ public class Mapper implements IMapper {
 		{
 			found = false;
 			for (Pair<RavensObject, RavensObject> pair : map)
-				if (pair.getLeft().equals(difference.compared1))
+				if (pair.getLeft() != null && pair.getLeft().equals(difference.compared1))
 					found = true;
 			
 			if (!found)
@@ -61,7 +60,7 @@ public class Mapper implements IMapper {
 			
 			found = false;
 			for (Pair<RavensObject, RavensObject> pair : map)
-				if (pair.getRight().equals(difference.compared2))
+				if (pair.getRight() != null && pair.getRight().equals(difference.compared2))
 					found = true;
 			
 			if (!found)
