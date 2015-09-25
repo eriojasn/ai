@@ -8,4 +8,5 @@ import java.util.ArrayList;
 
 public interface IMapper {
 	public ArrayList<Pair<RavensObject, RavensObject>> Map();
+	public void PrintMap();
 }

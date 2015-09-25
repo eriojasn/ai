@@ -22,4 +22,10 @@ public class FigureExtractor implements IFigureExtractor {
 
 		return allObjects;
 	}
+
+	@Override
+	public Set<String> GetAllAttributeValues() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

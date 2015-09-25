@@ -66,4 +66,10 @@ public class ProblemExtractor implements IExtractor {
 		
 		return allAttributes;
 	}
+
+	@Override
+	public Set<String> GetAllAttributeValues() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

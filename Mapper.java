@@ -17,14 +17,16 @@ public class Mapper implements IMapper {
 	{
 		this.leftFigure = leftFigure;
 		this.rightFigure = rightFigure;
-		this.leftFigureExtractor = new FigureExtractor(this.leftFigure);
-		this.rightFigureExtractor = new FigureExtractor(this.rightFigure);
 		this.attributes = attributes;
+		
+		this.Map();
 	}
 
 	@Override
 	public ArrayList<Pair<RavensObject, RavensObject>> Map() {
-		map = new ArrayList<Pair<RavensObject, RavensObject>>();
+		this.leftFigureExtractor = new FigureExtractor(this.leftFigure);
+		this.rightFigureExtractor = new FigureExtractor(this.rightFigure);
+		this.map = new ArrayList<Pair<RavensObject, RavensObject>>();
 		
 		ArrayList<RavensObject> leftObjects = leftFigureExtractor.GetAllObjects();
 		ArrayList<RavensObject> rightObjects = rightFigureExtractor.GetAllObjects();
@@ -41,32 +43,61 @@ public class Mapper implements IMapper {
 		{
 			found = false;
 			for (Pair<RavensObject, RavensObject> pair : map)
-				if (pair.getLeft().equals(difference.compared1) || pair.getRight().equals(difference.compared2))
+				if (pair.getLeft().equals(difference.leftObject) || pair.getRight().equals(difference.rightObject))
 					found = true;
 			
 			if(!found)
-				map.add(new Pair<RavensObject, RavensObject>(difference.compared1, difference.compared2));
+				map.add(new Pair<RavensObject, RavensObject>(difference.leftObject, difference.rightObject));
 		}
 		
 		for (ObjectDifference difference : differences)
 		{
 			found = false;
 			for (Pair<RavensObject, RavensObject> pair : map)
-				if (pair.getLeft() != null && pair.getLeft().equals(difference.compared1))
+				if (pair.getLeft() != null && pair.getLeft().equals(difference.leftObject))
 					found = true;
 			
 			if (!found)
-				map.add(new Pair<RavensObject, RavensObject>(difference.compared1, null));
+				map.add(new Pair<RavensObject, RavensObject>(difference.leftObject, null));
 			
 			found = false;
 			for (Pair<RavensObject, RavensObject> pair : map)
-				if (pair.getRight() != null && pair.getRight().equals(difference.compared2))
+				if (pair.getRight() != null && pair.getRight().equals(difference.rightObject))
 					found = true;
 			
 			if (!found)
-				map.add(new Pair<RavensObject, RavensObject>(null, difference.compared2));
+				map.add(new Pair<RavensObject, RavensObject>(null, difference.rightObject));
 		}
 
+		this.PrintMap();
 		return map;
+	}
+
+	@Override
+	public void PrintMap() {
+    	System.out.println("Printing out map...");
+
+    	for (Pair<RavensObject, RavensObject> pair : map)
+    	{
+    		RavensObject left = pair.getLeft();
+    		RavensObject right = pair.getRight();
+    		
+    		if (left != null)
+    			System.out.print(left.getName());
+    		else
+    			System.out.print("null");
+    		
+    		System.out.print(" <-> ");
+    		
+    		if (right != null)
+    			System.out.print(right.getName());
+    		else
+    			System.out.print("null");
+    		
+    		if (left != null && right != null)
+    			System.out.println(" with a difference of " + (new ObjectDifference(pair.getLeft(), pair.getRight(), attributes)).difference);
+    		
+    		System.out.println();
+    	}
 	}
 }
