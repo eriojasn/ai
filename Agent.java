@@ -37,10 +37,23 @@ public class Agent {
     	horizontalMapper.PrintMap();
     	verticalMapper.PrintMap();
     	
-    	for (Pair<RavensObject, RavensObject> pair : horizontalMapper.map)
+    	ArrayList<Mapper> maps = new ArrayList<Mapper>();
+    	maps.add(horizontalMapper);
+    	maps.add(verticalMapper);
+    	TwoMapMerger mapMerger = new TwoMapMerger(horizontalMapper, verticalMapper);
+    	mapMerger.Merge();
+    	
+    	for (ArrayList<RavensObject> row : mapMerger.mergedMap)
     	{
+    		for (RavensObject object : row)
+    			if (object != null)
+    				System.out.print(object.getName() + " ");
+    			else
+    				System.out.print("null ");
+
+    		System.out.println();
     	}
     	
-        return 1;
+        return -1;
     }
 }
