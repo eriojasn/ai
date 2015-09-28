@@ -20,7 +20,7 @@ public class ProblemExtractor implements IExtractor {
 		ArrayList<RavensFigure> answerFigures = new ArrayList<RavensFigure>();
 		
 		for (RavensFigure figure : allFigures)
-			if (Character.isDefined(figure.getName().charAt(0)))
+			if (Character.isDigit(figure.getName().charAt(0)))
 				answerFigures.add(figure);
 		
 		return answerFigures;

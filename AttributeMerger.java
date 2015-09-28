@@ -9,11 +9,13 @@ public class AttributeMerger implements IAttributeMerger {
 
 	private ArrayList<RavensObject> objectsToMerge;
 	private Set<String> attributes;
+	private SymmetryChecker symmetryChecker;
 
-	public AttributeMerger(ArrayList<RavensObject> objectsToMerge, Set<String> attributes)
+	public AttributeMerger(ArrayList<RavensObject> objectsToMerge, Set<String> attributes, SymmetryChecker symmetryChecker)
 	{
 		this.objectsToMerge = objectsToMerge;
 		this.attributes = attributes;
+		this.symmetryChecker = symmetryChecker;
 	}
 
 	@Override
@@ -22,7 +24,7 @@ public class AttributeMerger implements IAttributeMerger {
 		ArrayList<HashMap<String, String>> objectAttributesToMerge = new ArrayList<HashMap<String, String>>();
 		
 		for (RavensObject objectToMerge : objectsToMerge)
-			objectAttributesToMerge.add(this.FillAttributeList(objectToMerge));
+			objectAttributesToMerge.add(AttributeListFiller.FillAttributeList(objectToMerge, attributes));
 		
 		for (String attribute : attributes)
 			mergedAttributes.put(attribute, objectAttributesToMerge.get(0).get(attribute));
@@ -31,6 +33,14 @@ public class AttributeMerger implements IAttributeMerger {
 			for (String attribute : attributes)
 				if (!ObjectDifference.IsAttributeEqual(objectAttributesToMerge.get(0), objectAttributesToMerge.get(i), attribute))
 					mergedAttributes.put(attribute, objectAttributesToMerge.get(i).get(attribute));
+		
+		//CHECK FOR SPECIAL CASE
+		
+		if (symmetryChecker.symmetricAngle >= 0)
+			mergedAttributes.put(SymmetryChecker.ANGLE_KEY, Integer.toString(symmetryChecker.symmetricAngle));
+		
+		if (symmetryChecker.symmetricPosition != null)
+			mergedAttributes.put(SymmetryChecker.ALIGNMENT_KEY, symmetryChecker.symmetricPosition);
 		
 		return mergedAttributes;
 	}
@@ -42,21 +52,4 @@ public class AttributeMerger implements IAttributeMerger {
 		for (String key : mergedAttributes.keySet())
 			System.out.println(key + ":" + mergedAttributes.get(key));
 	}
-	
-	private HashMap<String, String> FillAttributeList(RavensObject ravensObject)
-	{
-		HashMap<String, String> attributeList = new HashMap<String, String>();
-		
-		for (String attribute : attributes)
-			attributeList.put(attribute, null);
-		
-		if (ravensObject == null)
-			return attributeList;
-		
-		for (String attribute : attributes)
-			attributeList.put(attribute, ravensObject.getAttributes().get(attribute));
-		
-		return attributeList;
-	}
-
 }

@@ -11,23 +11,37 @@ public class ObjectDifference implements IDifference {
 	public int difference;
 
 	private Set<String> attributes;
+	private HashMap<String, String> leftObjectAttributes;
+	private HashMap<String, String> rightObjectAttributes;
 	
-	public ObjectDifference(RavensObject compared1, RavensObject compared2, Set<String> attributes)
+	public ObjectDifference(RavensObject leftObject, RavensObject rightObject, Set<String> attributes)
 	{
-		this.leftObject = compared1;
-		this.rightObject = compared2;
+		this.leftObject = leftObject;
+		this.rightObject = rightObject;
 		this.attributes = attributes;
+		this.difference = attributes.size();
 		
+		this.leftObjectAttributes = AttributeListFiller.FillAttributeList(leftObject, attributes);
+		this.rightObjectAttributes = AttributeListFiller.FillAttributeList(rightObject, attributes);
+
+		this.Compare();
+	}
+	
+	public ObjectDifference(HashMap<String, String> leftAttributes, RavensObject rightObject, Set<String> attributes)
+	{
+		this.leftObjectAttributes = leftAttributes;
+		this.rightObject = rightObject;
+		this.attributes = attributes;
+		this.difference = attributes.size();
+		
+		this.rightObjectAttributes = AttributeListFiller.FillAttributeList(rightObject, attributes);
+
 		this.Compare();
 	}
 
 	@Override
 	public int Compare() {
 		this.replacementAttributes = new HashMap<String, String>();
-		this.difference = attributes.size();
-
-		HashMap<String, String> leftObjectAttributes = leftObject.getAttributes();
-		HashMap<String, String> rightObjectAttributes = rightObject.getAttributes();
 
 		for	(String attribute : this.attributes)
 			if (ObjectDifference.IsAttributeEqual(leftObjectAttributes, rightObjectAttributes, attribute))
@@ -46,15 +60,9 @@ public class ObjectDifference implements IDifference {
 			return true;
 		else return false;
 	}
-	
+
 	public void PrintDifference()
 	{
-		System.out.println();
-		System.out.println("Printing out difference...");
-		System.out.println("The difference between RavensObject " + leftObject.getName() 
-			+ " and RavensObject " + rightObject.getName() + " is " + difference);
-		
-		for (String attribute : this.replacementAttributes.keySet())
-			System.out.println(attribute + " becomes " + this.replacementAttributes.get(attribute));
+		System.out.println(this.difference);
 	}
 }
