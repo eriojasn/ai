@@ -22,6 +22,9 @@ public class Agent {
     	 */
     	if (!problem.hasVerbal())
     		return -1;
+    	
+    	if (problem.getName().equals("Basic Problem B-05"))
+    		System.out.println();
 
     	System.out.println("New problem " + problem.getName() + "...");
 
@@ -42,16 +45,13 @@ public class Agent {
     	maps.add(verticalMapper);
     	TwoMapMerger mapMerger = new TwoMapMerger(horizontalMapper, verticalMapper);
     	mapMerger.Merge();
+    	mapMerger.PrintMergedMap();
     	
     	for (ArrayList<RavensObject> row : mapMerger.mergedMap)
     	{
-    		for (RavensObject object : row)
-    			if (object != null)
-    				System.out.print(object.getName() + " ");
-    			else
-    				System.out.print("null ");
-
-    		System.out.println();
+    		AttributeMerger attributeMerger = new AttributeMerger(row, allAttributes);
+    		attributeMerger.Merge();
+    		attributeMerger.PrintMergedAttributes();
     	}
     	
         return -1;

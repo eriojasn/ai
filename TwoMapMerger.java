@@ -48,6 +48,20 @@ public class TwoMapMerger implements IMapMerger {
 		return mergedMap;
 	}
 	
+	public void PrintMergedMap()
+	{
+    	for (ArrayList<RavensObject> row : this.mergedMap)
+    	{
+    		for (RavensObject object : row)
+    			if (object != null)
+    				System.out.print(object.getName() + " ");
+    			else
+    				System.out.print("null ");
+
+    		System.out.println();
+    	}
+	}
+	
 	private void AddPair(Pair<RavensObject, RavensObject> pair)
 	{
 		ArrayList<RavensObject> newRow = new ArrayList<RavensObject>();

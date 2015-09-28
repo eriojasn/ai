@@ -30,14 +30,21 @@ public class ObjectDifference implements IDifference {
 		HashMap<String, String> rightObjectAttributes = rightObject.getAttributes();
 
 		for	(String attribute : this.attributes)
-			if (leftObjectAttributes.get(attribute) == rightObjectAttributes.get(attribute) ||
-			((leftObjectAttributes.get(attribute) != null && rightObjectAttributes.get(attribute) != null) &&
-					leftObjectAttributes.get(attribute).equals(rightObjectAttributes.get(attribute))))
+			if (ObjectDifference.IsAttributeEqual(leftObjectAttributes, rightObjectAttributes, attribute))
 				difference--;
 			else if (rightObjectAttributes.get(attribute) != null)
 				this.replacementAttributes.put(attribute, rightObjectAttributes.get(attribute));
 
 		return difference;
+	}
+	
+	public static boolean IsAttributeEqual(HashMap<String, String> leftObjectAttributes, HashMap<String, String> rightObjectAttributes, String attribute)
+	{
+		if (leftObjectAttributes.get(attribute) == rightObjectAttributes.get(attribute) ||
+		((leftObjectAttributes.get(attribute) != null && rightObjectAttributes.get(attribute) != null) &&
+				leftObjectAttributes.get(attribute).equals(rightObjectAttributes.get(attribute))))
+			return true;
+		else return false;
 	}
 	
 	public void PrintDifference()

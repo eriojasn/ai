@@ -14,8 +14,6 @@ public class AttributeMerger implements IAttributeMerger {
 	{
 		this.objectsToMerge = objectsToMerge;
 		this.attributes = attributes;
-		
-		this.Merge();
 	}
 
 	@Override
@@ -31,10 +29,18 @@ public class AttributeMerger implements IAttributeMerger {
 
 		for (int i = 1; i < objectsToMerge.size(); i++)
 			for (String attribute : attributes)
-				if (objectAttributesToMerge.get(0).get(attribute) != objectAttributesToMerge.get(i).get(attribute))
+				if (!ObjectDifference.IsAttributeEqual(objectAttributesToMerge.get(0), objectAttributesToMerge.get(i), attribute))
 					mergedAttributes.put(attribute, objectAttributesToMerge.get(i).get(attribute));
 		
 		return mergedAttributes;
+	}
+	
+	public void PrintMergedAttributes()
+	{
+		System.out.println("Printing merged attributes...");
+		
+		for (String key : mergedAttributes.keySet())
+			System.out.println(key + ":" + mergedAttributes.get(key));
 	}
 	
 	private HashMap<String, String> FillAttributeList(RavensObject ravensObject)
