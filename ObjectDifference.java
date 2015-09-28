@@ -37,12 +37,12 @@ public class ObjectDifference implements IDifference {
 			else if (rightObjectAttributes.get(attribute) != null)
 				this.replacementAttributes.put(attribute, rightObjectAttributes.get(attribute));
 
-		this.PrintDifference();
 		return difference;
 	}
 	
 	public void PrintDifference()
 	{
+		System.out.println();
 		System.out.println("Printing out difference...");
 		System.out.println("The difference between RavensObject " + leftObject.getName() 
 			+ " and RavensObject " + rightObject.getName() + " is " + difference);

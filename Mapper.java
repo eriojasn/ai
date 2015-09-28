@@ -10,8 +10,6 @@ public class Mapper implements IMapper {
 	public ArrayList<Pair<RavensObject, RavensObject>> map;
 	
 	private Set<String> attributes;
-	private FigureExtractor leftFigureExtractor;
-	private FigureExtractor rightFigureExtractor;
 	
 	public Mapper(RavensFigure leftFigure, RavensFigure rightFigure, Set<String> attributes)
 	{
@@ -24,8 +22,8 @@ public class Mapper implements IMapper {
 
 	@Override
 	public ArrayList<Pair<RavensObject, RavensObject>> Map() {
-		this.leftFigureExtractor = new FigureExtractor(this.leftFigure);
-		this.rightFigureExtractor = new FigureExtractor(this.rightFigure);
+		FigureExtractor leftFigureExtractor = new FigureExtractor(this.leftFigure);
+		FigureExtractor rightFigureExtractor = new FigureExtractor(this.rightFigure);
 		this.map = new ArrayList<Pair<RavensObject, RavensObject>>();
 		
 		ArrayList<RavensObject> leftObjects = leftFigureExtractor.GetAllObjects();
@@ -69,7 +67,7 @@ public class Mapper implements IMapper {
 				map.add(new Pair<RavensObject, RavensObject>(null, difference.rightObject));
 		}
 
-		this.PrintMap();
+		//this.PrintMap();
 		return map;
 	}
 
@@ -94,10 +92,11 @@ public class Mapper implements IMapper {
     		else
     			System.out.print("null");
     		
-    		if (left != null && right != null)
-    			System.out.println(" with a difference of " + (new ObjectDifference(pair.getLeft(), pair.getRight(), attributes)).difference);
-    		
     		System.out.println();
+
+    		ObjectDifference temp;
+    		if (left != null && right != null)
+    			temp = new ObjectDifference(pair.getLeft(), pair.getRight(), this.attributes);
     	}
 	}
 }

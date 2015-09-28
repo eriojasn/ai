@@ -34,6 +34,12 @@ public class Agent {
     	Mapper verticalMapper = new Mapper(problemFigures.get(0), problemFigures.get(2), allAttributes);
     	ArrayList<Pair<RavensObject, RavensObject>> verticalMap = verticalMapper.Map();
     	
+    	horizontalMapper.PrintMap();
+    	verticalMapper.PrintMap();
+    	
+    	for (Pair<RavensObject, RavensObject> pair : horizontalMapper.map)
+    	{
+    	}
     	
         return 1;
     }
