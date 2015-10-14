@@ -11,9 +11,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 public class Agent {
-    public Agent() {
-        
-    }
+    public Agent() { }
 
     public int Solve(RavensProblem problem) {
     	if (!problem.hasVerbal())
