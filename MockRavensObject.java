@@ -7,7 +7,6 @@ public class MockRavensObject extends RavensObject {
 
 	public MockRavensObject(String name) {
 		super(name);
-		// TODO Auto-generated constructor stub
 	}
 	
     public HashMap<String,String> getAttributes() {
