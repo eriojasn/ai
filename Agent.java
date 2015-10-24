@@ -16,9 +16,6 @@ public class Agent {
     public int Solve(RavensProblem problem) {
     	if (!problem.hasVerbal())
     		return -1;
-    	
-    	if (problem.getName().equals("Basic Problem B-04"))
-    		System.out.println();
 
     	System.out.println("New problem " + problem.getName() + "...");
 
