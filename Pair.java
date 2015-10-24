@@ -15,7 +15,7 @@ public class Pair<L,R> implements IPair<L, R> {
 	  @Override
 	  public boolean equals(Object object) {
 	    if (!(object instanceof Pair)) return false;
-	    Pair pairObject = (Pair)oobject;
+	    Pair pairObject = (Pair)object;
 	    return this.left.equals(pairObject.getLeft()) &&
 	           this.right.equals(pairObject.getRight());
 	  }
