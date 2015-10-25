@@ -26,6 +26,7 @@ public class Agent {
 	{
         MemoryIO memoryIO = new MemoryIO();
         ArrayList<ArrayList<ArrayList<RavensObject>>> problems = memoryIO.ReadMemory();
+
 		ProblemExtractor extractor = new ProblemExtractor(problem);
 		Set<String> allAttributes = extractor.GetAllAttributes();
 		ArrayList<Mapper> horizontalMaps = new ArrayList<>();

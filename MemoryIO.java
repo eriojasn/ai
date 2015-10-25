@@ -12,7 +12,7 @@ public class MemoryIO {
     private static final String OBJECT_DELIM = "<o>";
     private static final String ATTRIBUTE_DELIM = "<a>";
     private static final String SOLUTION_DELIM = "<f>";
-    private static final String FILE_NAME = "ravensproject/memory.txt";
+    private static final String FILE_NAME = "memory.txt";
 
     public MemoryIO() { }
 
@@ -95,9 +95,14 @@ public class MemoryIO {
         BufferedReader bufferedReader = null;
         ArrayList<ArrayList<ArrayList<RavensObject>>> allProblems = new ArrayList<>();
 
+        String filePath = FILE_NAME;
+        File file = new File(filePath);
+        if (!file.exists())
+           filePath = "ravensproject/" + filePath;
+
         try
         {
-            bufferedReader = new BufferedReader(new FileReader(FILE_NAME));
+            bufferedReader = new BufferedReader(new FileReader(filePath));
             String memory = bufferedReader.readLine();
             List<String> problems = this.RemoveNulls(memory.split(PROBLEM_DELIM));
 
