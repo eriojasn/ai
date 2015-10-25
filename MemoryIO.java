@@ -99,6 +99,12 @@ public class MemoryIO {
         File file = new File(filePath);
         if (!file.exists())
            filePath = "ravensproject/" + filePath;
+        file = new File(filePath);
+        if (!file.exists())
+            filePath = "../" + FILE_NAME;
+        file = new File(filePath);
+        if(!file.exists())
+            filePath = "../ravensproject/" + FILE_NAME;
 
         try
         {
