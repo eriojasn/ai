@@ -17,12 +17,10 @@ public class Agent {
     	if (!problem.hasVerbal())
     		return -1;
 
-		System.out.println("New problem " + problem.getName() + "...");
+		if (problem.getProblemType().equals("2x2"))
+			return this.SolveTwoByTwo(problem, 0, 1, 2, true);
 
-		if (problem.getName().contains("Problem B-"))
-			return this.SolveTwoByTwo(problem);
-
-		if (problem.getName().contains(("Problem C-")))
+		if (problem.getProblemType().contains(("3x3")))
 			return this.SolveThreeByThree(problem);
 
 		return -1;
@@ -30,43 +28,60 @@ public class Agent {
 
 	private int SolveThreeByThree(RavensProblem problem)
 	{
+        MemoryIO memoryIO = new MemoryIO();
+        ArrayList<ArrayList<ArrayList<RavensObject>>> problems = memoryIO.ReadMemory();
 		ProblemExtractor extractor = new ProblemExtractor(problem);
-		HashMap<String, Set<String>> attributeValues = extractor.GetAllAttributeValuePairs();
+		Set<String> allAttributes = extractor.GetAllAttributes();
+		ArrayList<Mapper> horizontalMaps = new ArrayList<>();
+		ArrayList<Mapper> verticalMaps = new ArrayList<>();
+		ArrayList<RavensFigure> problemFigures = extractor.GetProblemFigures();
+		ArrayList<RavensObject> solutionFigure = new ArrayList<RavensObject>();
 
-		for (String attribute : attributeValues.keySet())
-		{
-			System.out.print("All possible values for " + attribute + ": ");
-			Set<String> temp = attributeValues.get(attribute);
+		boolean foundProblem = false;
+		ArrayList<ArrayList<RavensObject>> solutionProblem = null;
+        for (ArrayList<ArrayList<RavensObject>> dbProblem : problems) {
+            for (ArrayList<RavensObject> dbFigure : dbProblem) {
+                Mapper comparerMap = new Mapper(dbFigure, problemFigures.get(0), allAttributes);
+                comparerMap.Map();
+                int diff = comparerMap.figureDifference;
 
-			for (String value : temp)
-				System.out.print(value + ";");
+				if (diff == 0) {
+					foundProblem = true;
+					break;
+				}
+            }
 
-			System.out.println();
-		}
+			if (foundProblem) {
+				solutionFigure = dbProblem.get(dbProblem.size() - 1);
+				break;
+			}
+        }
 
-		return -1;
+		if (foundProblem)
+			return this.CompareProposedAnswer(solutionFigure, extractor, allAttributes);
+		else
+			return this.SolveTwoByTwo(problem, 4, 5, 7, false);
 	}
 
-	private int SolveTwoByTwo(RavensProblem problem)
+	private int SolveTwoByTwo(RavensProblem problem, int pivot, int right, int bottom, boolean checkForSymmetry)
 	{
     	ProblemExtractor extractor = new ProblemExtractor(problem);
     	Set<String> allAttributes = extractor.GetAllAttributes();
     	ArrayList<RavensFigure> problemFigures =  extractor.GetProblemFigures();
 		HashMap<String, Set<String>> attributeValues = extractor.GetAllAttributeValuePairs();
 
-    	SymmetryChecker symmetryChecker = new SymmetryChecker(problemFigures);
+		SymmetryChecker symmetryChecker = null;
+		if (checkForSymmetry)
+			symmetryChecker = new SymmetryChecker(problemFigures);
 
-    	Mapper horizontalMapper = new Mapper(problemFigures.get(0), problemFigures.get(1), allAttributes);
+    	Mapper horizontalMapper = new Mapper(problemFigures.get(pivot), problemFigures.get(right), allAttributes);
     	ArrayList<Pair<RavensObject, RavensObject>> horizontalMap = horizontalMapper.Map();
-    	Mapper verticalMapper = new Mapper(problemFigures.get(0), problemFigures.get(2), allAttributes);
+    	Mapper verticalMapper = new Mapper(problemFigures.get(pivot), problemFigures.get(bottom), allAttributes);
     	ArrayList<Pair<RavensObject, RavensObject>> verticalMap = verticalMapper.Map();
 
     	horizontalMapper.PrintMap();
     	verticalMapper.PrintMap();
 
-    	ArrayList<Mapper> maps = new ArrayList<Mapper>();
-    	maps.add(horizontalMapper);
-    	maps.add(verticalMapper);
     	TwoMapMerger mapMerger = new TwoMapMerger(horizontalMapper, verticalMapper);
     	mapMerger.Merge();
     	mapMerger.PrintMergedMap();
@@ -74,7 +89,12 @@ public class Agent {
     	ArrayList<RavensObject> solutionFigure = new ArrayList<RavensObject>();
     	for (ArrayList<RavensObject> row : mapMerger.mergedMap)
     	{
-    		AttributeMerger attributeMerger = new AttributeMerger(row, allAttributes, symmetryChecker);
+			AttributeMerger attributeMerger = null;
+			if (symmetryChecker != null)
+    			attributeMerger = new AttributeMerger(row, allAttributes, symmetryChecker);
+			else
+				attributeMerger = new AttributeMerger(row, allAttributes);
+
     		attributeMerger.Merge();
     		attributeMerger.PrintMergedAttributes();
     		MockRavensObject temp = new MockRavensObject("x" + 1);
@@ -82,7 +102,12 @@ public class Agent {
     		solutionFigure.add(temp);
     	}
 
-    	ArrayList<RavensFigure> answerFigures = extractor.GetAnswerFigures();
+		return this.CompareProposedAnswer(solutionFigure, extractor, allAttributes);
+	}
+
+	private int CompareProposedAnswer(ArrayList<RavensObject> solutionFigure, ProblemExtractor extractor, Set<String> allAttributes)
+	{
+        ArrayList<RavensFigure> answerFigures = extractor.GetAnswerFigures();
 
     	ArrayList<Mapper> answerMaps = new ArrayList<Mapper>();
     	for (RavensFigure answerFigure : answerFigures)

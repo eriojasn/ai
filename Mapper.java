@@ -73,14 +73,15 @@ public class Mapper implements IMapper {
 			
 			if (!found)
 				map.add(new Pair<RavensObject, RavensObject>(difference.leftObject, null));
-			
+
 			found = false;
 			for (Pair<RavensObject, RavensObject> pair : map)
 				if (pair.getRight() != null && pair.getRight().equals(difference.rightObject))
 					found = true;
 			
-			if (!found)
+			if (!found) {
 				map.add(new Pair<RavensObject, RavensObject>(null, difference.rightObject));
+			}
 		}
 
 		this.figureDifference = this.GetFigureDifference();

@@ -7,8 +7,10 @@ public class MockRavensObject extends RavensObject {
 
 	public MockRavensObject(String name) {
 		super(name);
+        attributes = new HashMap<>();
+        attributes.put("shape", "none");
 	}
-	
+
     public HashMap<String,String> getAttributes() {
         return this.attributes;
     }
