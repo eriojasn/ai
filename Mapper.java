@@ -9,6 +9,7 @@ public class Mapper implements IMapper {
 	public RavensFigure rightFigure;
 	public ArrayList<Pair<RavensObject, RavensObject>> map;
 	public int figureDifference;
+	public int problemNumber;
 	
 	private Set<String> attributes;
 	private FigureExtractor leftFigureExtractor;

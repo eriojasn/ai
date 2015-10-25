@@ -1,10 +1,7 @@
 package ravensproject;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by eriojasn on 10/25/15.
@@ -117,7 +114,8 @@ public class MemoryIO {
                     for (String object : objects)
                     {
                         List<String> attributes = this.RemoveNulls(object.split(ATTRIBUTE_DELIM));
-                        MockRavensObject ravensObject = new MockRavensObject("");
+                        String uuid = UUID.randomUUID().toString();
+                        MockRavensObject ravensObject = new MockRavensObject(uuid);
                         HashMap<String, String> attributeValues = new HashMap<>();
 
                         for (String attribute : attributes)

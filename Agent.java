@@ -2,11 +2,7 @@ package ravensproject;
 
 import java.awt.Image;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 
@@ -37,30 +33,33 @@ public class Agent {
 		ArrayList<RavensFigure> problemFigures = extractor.GetProblemFigures();
 		ArrayList<RavensObject> solutionFigure = new ArrayList<RavensObject>();
 
-		boolean foundProblem = false;
+		ArrayList<Mapper> comparerMaps = new ArrayList<>();
 		ArrayList<ArrayList<RavensObject>> solutionProblem = null;
+		int problemIndex = 0;
         for (ArrayList<ArrayList<RavensObject>> dbProblem : problems) {
-            for (ArrayList<RavensObject> dbFigure : dbProblem) {
-                Mapper comparerMap = new Mapper(dbFigure, problemFigures.get(0), allAttributes);
-                comparerMap.Map();
-                int diff = comparerMap.figureDifference;
-
-				if (diff == 0) {
-					foundProblem = true;
-					break;
+			for (ArrayList<RavensObject> dbFigure : dbProblem)
+				for (RavensFigure problemFigure : problemFigures) {
+					Mapper comparerMap = new Mapper(dbFigure, problemFigure, allAttributes);
+					comparerMap.problemNumber = problemIndex;
+					comparerMap.Map();
+					if (dbProblem.size() >= 7)
+						comparerMaps.add(comparerMap);
 				}
-            }
 
-			if (foundProblem) {
-				solutionFigure = dbProblem.get(dbProblem.size() - 1);
-				break;
-			}
-        }
+			problemIndex++;
+		}
 
-		if (foundProblem)
-			return this.CompareProposedAnswer(solutionFigure, extractor, allAttributes);
-		else
-			return this.SolveTwoByTwo(problem, 4, 5, 7, false);
+		Collections.sort(comparerMaps, new MapperComparator());
+		ArrayList<Integer> plausibleProblems = new ArrayList<>();
+		for (Mapper comparerMap : comparerMaps)
+			if (comparerMap.figureDifference == comparerMaps.get(0).figureDifference)
+				plausibleProblems.add(comparerMap.problemNumber);
+
+		solutionProblem = problems.get(MostCommonInt(plausibleProblems));
+
+		solutionFigure = solutionProblem.get(solutionProblem.size() - 1);
+
+		return this.CompareProposedAnswer(solutionFigure, extractor, allAttributes);
 	}
 
 	private int SolveTwoByTwo(RavensProblem problem, int pivot, int right, int bottom, boolean checkForSymmetry)
@@ -120,5 +119,23 @@ public class Agent {
     	Collections.sort(answerMaps, new MapperComparator());
 
         return Integer.parseInt(answerMaps.get(0).rightFigure.getName());
+	}
+
+	public static <T> T MostCommonInt(List<T> list) {
+		Map<T, Integer> map = new HashMap<>();
+
+		for (T t : list) {
+			Integer val = map.get(t);
+			map.put(t, val == null ? 1 : val + 1);
+		}
+
+		Map.Entry<T, Integer> max = null;
+
+		for (Map.Entry<T, Integer> e : map.entrySet()) {
+			if (max == null || e.getValue() > max.getValue())
+				max = e;
+		}
+
+		return max.getKey();
 	}
 }

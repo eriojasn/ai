@@ -1,6 +1,7 @@
 package ravensproject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -13,14 +14,15 @@ public class ObjectDifference implements IDifference {
 	private Set<String> attributes;
 	private HashMap<String, String> leftObjectAttributes;
 	private HashMap<String, String> rightObjectAttributes;
-	
+	private static String[] relationalAttributes = {"inside", "left-of", "above", "overlaps", "right-of", "below"};
+
 	public ObjectDifference(RavensObject leftObject, RavensObject rightObject, Set<String> attributes)
 	{
 		this.leftObject = leftObject;
 		this.rightObject = rightObject;
 		this.attributes = attributes;
 		this.difference = attributes.size();
-		
+
 		this.leftObjectAttributes = AttributeListFiller.FillAttributeList(leftObject, attributes);
 		this.rightObjectAttributes = AttributeListFiller.FillAttributeList(rightObject, attributes);
 
@@ -58,7 +60,13 @@ public class ObjectDifference implements IDifference {
 		((leftObjectAttributes.get(attribute) != null && rightObjectAttributes.get(attribute) != null) &&
 				leftObjectAttributes.get(attribute).equals(rightObjectAttributes.get(attribute))))
 			return true;
-		else return false;
+
+		if (Arrays.asList(relationalAttributes).contains(attribute))
+			if ((leftObjectAttributes.get(attribute) != null && rightObjectAttributes.get(attribute) != null) &&
+					leftObjectAttributes.get(attribute).length() == rightObjectAttributes.get(attribute).length())
+				return true;
+
+		return false;
 	}
 
 	public void PrintDifference()
