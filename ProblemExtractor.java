@@ -69,7 +69,35 @@ public class ProblemExtractor implements IExtractor {
 
 	@Override
 	public Set<String> GetAllAttributeValues() {
-		// TODO Auto-generated method stub
-		return null;
+		Set<String> allValues = new HashSet<>();
+
+		for (RavensObject object : this.GetAllObjects())
+			for (String value : object.getAttributes().values())
+				allValues.add(value);
+
+		return allValues;
+	}
+
+	public HashMap<String, Set<String>> GetAllAttributeValuePairs()
+	{
+		HashMap<String, Set<String>> attributeValuePairs = new HashMap<>();
+
+		for (String attribute : this.GetAllAttributes())
+			attributeValuePairs.put(attribute, new HashSet<String>());
+
+		for (RavensObject object : this.GetAllObjects()) {
+			HashMap<String, String> attributePairs = object.getAttributes();
+
+			for (String attribute : attributePairs.keySet()) {
+				Set<String> temp = attributeValuePairs.get(attribute);
+				temp.add(attributePairs.get(attribute));
+				attributeValuePairs.put(attribute, temp);
+			}
+		}
+
+		return attributeValuePairs;
+	}
+
+	public void WriteAttributesToFile() {
 	}
 }

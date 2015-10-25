@@ -11,6 +11,12 @@ public class AttributeMerger implements IAttributeMerger {
 	private Set<String> attributes;
 	private SymmetryChecker symmetryChecker;
 
+	public AttributeMerger(ArrayList<RavensObject> objectsToMerge, Set<String> attributes)
+	{
+		this.objectsToMerge = objectsToMerge;
+		this.attributes = attributes;
+	}
+
 	public AttributeMerger(ArrayList<RavensObject> objectsToMerge, Set<String> attributes, SymmetryChecker symmetryChecker)
 	{
 		this.objectsToMerge = objectsToMerge;
@@ -35,12 +41,14 @@ public class AttributeMerger implements IAttributeMerger {
 					mergedAttributes.put(attribute, objectAttributesToMerge.get(i).get(attribute));
 		
 		//CHECK FOR SPECIAL CASE
-		
-		if (symmetryChecker.symmetricAngle >= 0)
-			mergedAttributes.put(SymmetryChecker.ANGLE_KEY, Integer.toString(symmetryChecker.symmetricAngle));
-		
-		if (symmetryChecker.symmetricPosition != null)
-			mergedAttributes.put(SymmetryChecker.ALIGNMENT_KEY, symmetryChecker.symmetricPosition);
+
+		if (symmetryChecker != null) {
+			if (symmetryChecker.symmetricAngle >= 0)
+				mergedAttributes.put(SymmetryChecker.ANGLE_KEY, Integer.toString(symmetryChecker.symmetricAngle));
+
+			if (symmetryChecker.symmetricPosition != null)
+				mergedAttributes.put(SymmetryChecker.ALIGNMENT_KEY, symmetryChecker.symmetricPosition);
+		}
 		
 		return mergedAttributes;
 	}
