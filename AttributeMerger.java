@@ -55,9 +55,9 @@ public class AttributeMerger implements IAttributeMerger {
 	
 	public void PrintMergedAttributes()
 	{
-		System.out.println("Printing merged attributes...");
+//		System.out.println("Printing merged attributes...");
 		
-		for (String key : mergedAttributes.keySet())
-			System.out.println(key + ":" + mergedAttributes.get(key));
+//		for (String key : mergedAttributes.keySet())
+//			System.out.println(key + ":" + mergedAttributes.get(key));
 	}
 }

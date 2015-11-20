@@ -1,12 +1,8 @@
 package ravensproject;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-public class ProblemExtractor implements IExtractor {
+public class ProblemExtractor {
 	private RavensProblem problem;
 
 	public ProblemExtractor(RavensProblem problem)
@@ -22,6 +18,8 @@ public class ProblemExtractor implements IExtractor {
 		for (RavensFigure figure : allFigures)
 			if (Character.isDigit(figure.getName().charAt(0)))
 				answerFigures.add(figure);
+
+		Collections.sort(answerFigures, new RavensFigureComparator());
 		
 		return answerFigures;
 	}
@@ -35,13 +33,16 @@ public class ProblemExtractor implements IExtractor {
 			if (Character.isAlphabetic(figure.getName().charAt(0)))
 				problemFigures.add(figure);
 
+		Collections.sort(problemFigures, new RavensFigureComparator());
+
 		return problemFigures;
 	}
 
 	public ArrayList<RavensFigure> GetAllFigures()
 	{
 		ArrayList<RavensFigure> allFigures = new ArrayList<RavensFigure>(problem.getFigures().values());
-		
+		Collections.sort(allFigures, new RavensFigureComparator());
+
 		return allFigures;
 	}
 	
@@ -67,7 +68,6 @@ public class ProblemExtractor implements IExtractor {
 		return allAttributes;
 	}
 
-	@Override
 	public Set<String> GetAllAttributeValues() {
 		Set<String> allValues = new HashSet<>();
 
@@ -96,8 +96,5 @@ public class ProblemExtractor implements IExtractor {
 		}
 
 		return attributeValuePairs;
-	}
-
-	public void WriteAttributesToFile() {
 	}
 }

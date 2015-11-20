@@ -11,7 +11,7 @@ public class Agent {
 
     public int Solve(RavensProblem problem) {
     	if (!problem.hasVerbal())
-    		return -1;
+    		return SolveVisually(problem);
 
 		if (problem.getProblemType().equals("2x2"))
 			return this.SolveTwoByTwo(problem, 0, 1, 2, true);
@@ -22,12 +22,62 @@ public class Agent {
 		return -1;
     }
 
+	private int SolveVisually(RavensProblem problem)
+	{
+		ProblemExtractor problemExtractor = new ProblemExtractor(problem);
+		ArrayList<RavensFigure> problemFigures = problemExtractor.GetProblemFigures();
+		ArrayList<LiquidImage> liquidProblemFigures = new ArrayList<>();
+
+		for (RavensFigure problemFigure : problemFigures) {
+			LiquidImage temp = new LiquidImage(problemFigure);
+			temp.name = problemFigure.getName();
+			liquidProblemFigures.add(temp);
+//            LiquidImage.DrawLiquidImage(new LiquidImage(problemFigure), problem.getName() + problemFigure.getName());
+		}
+
+		MatrixManipulator matrixManipulator = new MatrixManipulator(liquidProblemFigures);
+		ArrayList<Relationship> relationships = matrixManipulator.GetRelationships();
+		liquidProblemFigures = matrixManipulator.matrix;
+
+		// Testing...
+		// Apply last operation to cell above answer cell, let that be tentative answer...
+		LiquidImage tentativeAnswer;
+		if (problem.getProblemType().contains("3"))
+			tentativeAnswer = ArrayOperator.ApplyOperation(liquidProblemFigures.get(5), relationships.get(relationships.size() - 2).operation);
+		else
+			tentativeAnswer = ArrayOperator.ApplyOperation(liquidProblemFigures.get(1), relationships.get(relationships.size() - 2).operation);
+
+		LiquidImage.DrawLiquidImage(tentativeAnswer, "tentAnswer-" + problem.getName());
+
+		ArrayList<RavensFigure> answerFigures = problemExtractor.GetAnswerFigures();
+		ArrayList<LiquidImage> liquidAnswerFigures = new ArrayList<>();
+
+		for (RavensFigure answerFigure : answerFigures)
+			liquidAnswerFigures.add(new LiquidImage(answerFigure));
+
+		int minDifference = tentativeAnswer.liquidImg.length;
+		int answer = -1;
+		int answerIndex = 1;
+		for (LiquidImage liquidAnswerFigure : liquidAnswerFigures)
+		{
+			int difference = ArrayOperator.Difference(tentativeAnswer.liquidImg, liquidAnswerFigure.liquidImg);
+			if (difference < minDifference) {
+				minDifference = difference;
+				answer = answerIndex;
+			}
+
+			answerIndex++;
+		}
+
+		return answer;
+	}
+
 	private int SolveThreeByThree(RavensProblem problem)
 	{
         MemoryIO memoryIO = new MemoryIO();
         ArrayList<ArrayList<ArrayList<RavensObject>>> problems = memoryIO.ReadMemory();
 
-		ProblemExtractor extractor = new ProblemExtractor(problem);
+		VerbalProblemExtractor extractor = new VerbalProblemExtractor(problem);
 		Set<String> allAttributes = extractor.GetAllAttributes();
 		ArrayList<Mapper> horizontalMaps = new ArrayList<>();
 		ArrayList<Mapper> verticalMaps = new ArrayList<>();
@@ -65,7 +115,7 @@ public class Agent {
 
 	private int SolveTwoByTwo(RavensProblem problem, int pivot, int right, int bottom, boolean checkForSymmetry)
 	{
-    	ProblemExtractor extractor = new ProblemExtractor(problem);
+    	VerbalProblemExtractor extractor = new VerbalProblemExtractor(problem);
     	Set<String> allAttributes = extractor.GetAllAttributes();
     	ArrayList<RavensFigure> problemFigures =  extractor.GetProblemFigures();
 		HashMap<String, Set<String>> attributeValues = extractor.GetAllAttributeValuePairs();
@@ -105,7 +155,7 @@ public class Agent {
 		return this.CompareProposedAnswer(solutionFigure, extractor, allAttributes);
 	}
 
-	private int CompareProposedAnswer(ArrayList<RavensObject> solutionFigure, ProblemExtractor extractor, Set<String> allAttributes)
+	private int CompareProposedAnswer(ArrayList<RavensObject> solutionFigure, VerbalProblemExtractor extractor, Set<String> allAttributes)
 	{
         ArrayList<RavensFigure> answerFigures = extractor.GetAnswerFigures();
 

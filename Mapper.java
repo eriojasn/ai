@@ -91,27 +91,27 @@ public class Mapper implements IMapper {
 
 	@Override
 	public void PrintMap() {
-    	System.out.println("Printing out map...");
+//    	System.out.println("Printing out map...");
 
     	for (Pair<RavensObject, RavensObject> pair : map)
     	{
     		RavensObject left = pair.getLeft();
     		RavensObject right = pair.getRight();
     		
-    		if (left != null)
-    			System.out.print(left.getName());
-    		else
-    			System.out.print("null");
+//    		if (left != null)
+//    			System.out.print(left.getName());
+//    		else
+//    			System.out.print("null");
     		
-    		System.out.print(" <-> ");
+//    		System.out.print(" <-> ");
     		
-    		if (right != null)
-    			System.out.print(right.getName());
-    		else
-    			System.out.print("null");
+//    		if (right != null)
+//    			System.out.print(right.getName());
+//    		else
+//    			System.out.print("null");
     		
-    		System.out.println();
-    		System.out.println(this.figureDifference);
+//    		System.out.println();
+//    		System.out.println(this.figureDifference);
     	}
 	}
 	

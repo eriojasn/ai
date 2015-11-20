@@ -71,6 +71,6 @@ public class ObjectDifference implements IDifference {
 
 	public void PrintDifference()
 	{
-		System.out.println(this.difference);
+//		System.out.println(this.difference);
 	}
 }

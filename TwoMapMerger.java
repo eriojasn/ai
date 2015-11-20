@@ -52,13 +52,13 @@ public class TwoMapMerger implements IMapMerger {
 	{
     	for (ArrayList<RavensObject> row : this.mergedMap)
     	{
-    		for (RavensObject object : row)
-    			if (object != null)
-    				System.out.print(object.getName() + " ");
-    			else
-    				System.out.print("null ");
+//    		for (RavensObject object : row)
+//    			if (object != null)
+//    				System.out.print(object.getName() + " ");
+//    			else
+//    				System.out.print("null ");
 
-    		System.out.println();
+//    		System.out.println();
     	}
 	}
 	

@@ -1,6 +1,8 @@
 *.class
+*.png
 ProblemSet.java
 RavensFigure.java
 RavensObject.java
 RavensProblem.java
 RavensProject.java
+/bin/
