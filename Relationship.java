@@ -7,6 +7,9 @@ public class Relationship {
     public LiquidImage leftImage, rightImage, negativeImage;
     public boolean[] operation;
     public String name;
+    public int difference;
+    public double differencePercentage;
+    public int problemNumber;
 
     public Relationship(LiquidImage leftImage, LiquidImage rightImage)
     {
@@ -17,5 +20,7 @@ public class Relationship {
         this.name = leftImage.name + "-" + rightImage.name;
         negativeImage.name = this.name;
         negativeImage.liquidImg = operation;
+        this.difference = ArrayOperator.Difference(leftImage.liquidImg, rightImage.liquidImg);
+        this.differencePercentage = (double)difference / (double)leftImage.liquidImg.length * 100;
     }
 }

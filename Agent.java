@@ -10,16 +10,21 @@ public class Agent {
     public Agent() { }
 
     public int Solve(RavensProblem problem) {
-    	if (!problem.hasVerbal())
-    		return SolveVisually(problem);
+		VisualMemoryIO visualMemoryIO = new VisualMemoryIO();
+
+		if (problem.getName().contains("E-"))
+		{ }
+//			visualMemoryIO.Record(problem);
+//    	if (!problem.hasVerbal())
+//    		return SolveVisually(problem);
 
 		if (problem.getProblemType().equals("2x2"))
 			return this.SolveTwoByTwo(problem, 0, 1, 2, true);
 
 		if (problem.getProblemType().contains(("3x3"))) {
-			VisualMemoryIO visualMemoryIO = new VisualMemoryIO();
+//			VisualMemoryIO visualMemoryIO = new VisualMemoryIO();
 //			visualMemoryIO.Record(problem);
-			return this.SolveThreeByThree(problem);
+			return this.SolveVisually(problem);
 		}
 
 		return -1;
@@ -29,13 +34,45 @@ public class Agent {
 	{
 		ProblemExtractor problemExtractor = new ProblemExtractor(problem);
 		ArrayList<RavensFigure> problemFigures = problemExtractor.GetProblemFigures();
-		ArrayList<LiquidImage> liquidProblemFigures = new ArrayList<>();
+		ArrayList<LiquidImage> liquidProblemFigures = LiquidImage.ConvertFigures(problemFigures);
 
-		for (RavensFigure problemFigure : problemFigures) {
-			LiquidImage temp = new LiquidImage(problemFigure);
-			temp.name = problemFigure.getName();
-			liquidProblemFigures.add(temp);
-//            LiquidImage.DrawLiquidImage(new LiquidImage(problemFigure), problem.getName() + problemFigure.getName());
+		VisualMemoryIO visualMemoryIO = new VisualMemoryIO();
+		ArrayList<ArrayList<LiquidImage>> memoryProblems = visualMemoryIO.ReadMemory();
+
+		Rememberer rememberer = new Rememberer();
+		ArrayList<Relationship> memoryRelationships = rememberer.Remember(memoryProblems, liquidProblemFigures);
+
+		ArrayList<Integer> plausibleProblems = new ArrayList<>();
+		if (memoryRelationships.get(0).differencePercentage < .1) {
+			for (Relationship memoryRelationship : memoryRelationships)
+				if (memoryRelationship.differencePercentage <= memoryRelationships.get(0).differencePercentage)
+					plausibleProblems.add(memoryRelationship.problemNumber);
+
+			ArrayList<LiquidImage> solutionProblem = memoryProblems.get(MostCommonInt(plausibleProblems));
+			LiquidImage solutionFigure = solutionProblem.get(solutionProblem.size() - 1);
+			int answer = CompareProposedAnswer(solutionFigure, problemExtractor);
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+//			return answer;
 		}
 
 		MatrixManipulator matrixManipulator = new MatrixManipulator(liquidProblemFigures);
@@ -58,63 +95,66 @@ public class Agent {
 		for (RavensFigure answerFigure : answerFigures)
 			liquidAnswerFigures.add(new LiquidImage(answerFigure));
 
-		int minDifference = tentativeAnswer.liquidImg.length;
+		double minDifference = 100;
 		int answer = -1;
 		int answerIndex = 1;
 		for (LiquidImage liquidAnswerFigure : liquidAnswerFigures)
 		{
-			int difference = ArrayOperator.Difference(tentativeAnswer.liquidImg, liquidAnswerFigure.liquidImg);
-			if (difference < minDifference) {
-				minDifference = difference;
+			Relationship temp = new Relationship(tentativeAnswer, liquidAnswerFigure);
+			if (temp.differencePercentage < minDifference) {
+				minDifference = temp.differencePercentage;
 				answer = answerIndex;
 			}
 
 			answerIndex++;
 		}
 
+		if (minDifference >= 10)
+			return -1;
+
 		return answer;
 	}
 
-	private int SolveThreeByThree(RavensProblem problem)
-	{
-        MemoryIO memoryIO = new MemoryIO();
-        ArrayList<ArrayList<ArrayList<RavensObject>>> problems = memoryIO.ReadMemory();
-
-		VerbalProblemExtractor extractor = new VerbalProblemExtractor(problem);
-		Set<String> allAttributes = extractor.GetAllAttributes();
-		ArrayList<Mapper> horizontalMaps = new ArrayList<>();
-		ArrayList<Mapper> verticalMaps = new ArrayList<>();
-		ArrayList<RavensFigure> problemFigures = extractor.GetProblemFigures();
-		ArrayList<RavensObject> solutionFigure = new ArrayList<RavensObject>();
-
-		ArrayList<Mapper> comparerMaps = new ArrayList<>();
-		ArrayList<ArrayList<RavensObject>> solutionProblem = null;
-		int problemIndex = 0;
-        for (ArrayList<ArrayList<RavensObject>> dbProblem : problems) {
-			for (ArrayList<RavensObject> dbFigure : dbProblem)
-				for (RavensFigure problemFigure : problemFigures) {
-					Mapper comparerMap = new Mapper(dbFigure, problemFigure, allAttributes);
-					comparerMap.problemNumber = problemIndex;
-					comparerMap.Map();
-					if (dbProblem.size() >= 7)
-						comparerMaps.add(comparerMap);
-				}
-
-			problemIndex++;
-		}
-
-		Collections.sort(comparerMaps, new MapperComparator());
-		ArrayList<Integer> plausibleProblems = new ArrayList<>();
-		for (Mapper comparerMap : comparerMaps)
-			if (comparerMap.figureDifference == comparerMaps.get(0).figureDifference)
-				plausibleProblems.add(comparerMap.problemNumber);
-
-		solutionProblem = problems.get(MostCommonInt(plausibleProblems));
-
-		solutionFigure = solutionProblem.get(solutionProblem.size() - 1);
-
-		return this.CompareProposedAnswer(solutionFigure, extractor, allAttributes);
-	}
+//	private int SolveThreeByThree(RavensProblem problem)
+//	{
+//        MemoryIO memoryIO = new MemoryIO();
+//        ArrayList<ArrayList<ArrayList<RavensObject>>> problems = memoryIO.ReadMemory();
+//
+//		VerbalProblemExtractor extractor = new VerbalProblemExtractor(problem);
+//		Set<String> allAttributes = extractor.GetAllAttributes();
+//		ArrayList<Mapper> horizontalMaps = new ArrayList<>();
+//		ArrayList<Mapper> verticalMaps = new ArrayList<>();
+//		ArrayList<RavensFigure> problemFigures = extractor.GetProblemFigures();
+//		ArrayList<RavensObject> solutionFigure = new ArrayList<RavensObject>();
+//
+//		ArrayList<Mapper> comparerMaps = new ArrayList<>();
+//		ArrayList<ArrayList<RavensObject>> solutionProblem = null;
+//		int problemIndex = 0;
+//        for (ArrayList<ArrayList<RavensObject>> dbProblem : problems) {
+//			for (ArrayList<RavensObject> dbFigure : dbProblem)
+//				for (RavensFigure problemFigure : problemFigures) {
+//					Mapper comparerMap = new Mapper(dbFigure, problemFigure, allAttributes);
+//					comparerMap.problemNumber = problemIndex;
+//					comparerMap.Map();
+//					if (dbProblem.size() >= 7)
+//						comparerMaps.add(comparerMap);
+//				}
+//
+//			problemIndex++;
+//		}
+//
+//		Collections.sort(comparerMaps, new MapperComparator());
+//		ArrayList<Integer> plausibleProblems = new ArrayList<>();
+//		for (Mapper comparerMap : comparerMaps)
+//			if (comparerMap.figureDifference == comparerMaps.get(0).figureDifference)
+//				plausibleProblems.add(comparerMap.problemNumber);
+//
+//		solutionProblem = problems.get(MostCommonInt(plausibleProblems));
+//
+//		solutionFigure = solutionProblem.get(solutionProblem.size() - 1);
+//
+//		return this.CompareProposedAnswer(solutionFigure, extractor, allAttributes);
+//	}
 
 	private int SolveTwoByTwo(RavensProblem problem, int pivot, int right, int bottom, boolean checkForSymmetry)
 	{
@@ -173,6 +213,23 @@ public class Agent {
     	Collections.sort(answerMaps, new MapperComparator());
 
         return Integer.parseInt(answerMaps.get(0).rightFigure.getName());
+	}
+
+	private int CompareProposedAnswer(LiquidImage solutionFigure, ProblemExtractor extractor)
+	{
+		ArrayList<RavensFigure> answerFigures = extractor.GetAnswerFigures();
+		ArrayList<LiquidImage> liquidAnswerFigures = LiquidImage.ConvertFigures(answerFigures);
+
+		ArrayList<Relationship> answerRelationships = new ArrayList<>();
+		for (LiquidImage answerFigure : liquidAnswerFigures)
+		{
+			Relationship answerRelationship = new Relationship(solutionFigure, answerFigure);
+			answerRelationships.add(answerRelationship);
+		}
+
+		Collections.sort(answerRelationships, new RelationshipComparator());
+
+		return Integer.parseInt(answerRelationships.get(0).rightImage.name);
 	}
 
 	public static <T> T MostCommonInt(List<T> list) {

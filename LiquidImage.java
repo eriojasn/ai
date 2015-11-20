@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by eriojasn on 11/19/15.
@@ -49,6 +50,19 @@ public class LiquidImage {
             ImageIO.write(img, "png", outputfile);
         }
         catch (Exception e) { }
+    }
+
+    public static ArrayList<LiquidImage> ConvertFigures (ArrayList<RavensFigure> figures)
+    {
+        ArrayList<LiquidImage> liquidFigures = new ArrayList<>();
+
+        for (RavensFigure figure : figures) {
+            LiquidImage temp = new LiquidImage(figure);
+            temp.name = figure.getName();
+            liquidFigures.add(temp);
+        }
+
+        return liquidFigures;
     }
 
     private void LiquefyImage()
