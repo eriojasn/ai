@@ -16,8 +16,11 @@ public class Agent {
 		if (problem.getProblemType().equals("2x2"))
 			return this.SolveTwoByTwo(problem, 0, 1, 2, true);
 
-		if (problem.getProblemType().contains(("3x3")))
+		if (problem.getProblemType().contains(("3x3"))) {
+			VisualMemoryIO visualMemoryIO = new VisualMemoryIO();
+//			visualMemoryIO.Record(problem);
 			return this.SolveThreeByThree(problem);
+		}
 
 		return -1;
     }
