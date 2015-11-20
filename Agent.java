@@ -24,6 +24,7 @@ public class Agent {
 		if (problem.getProblemType().contains(("3x3"))) {
 //			VisualMemoryIO visualMemoryIO = new VisualMemoryIO();
 //			visualMemoryIO.Record(problem);
+			visualMemoryIO.Record(problem);
 			return this.SolveVisually(problem);
 		}
 
