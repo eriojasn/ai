@@ -12,19 +12,11 @@ public class Agent {
     public int Solve(RavensProblem problem) {
 		VisualMemoryIO visualMemoryIO = new VisualMemoryIO();
 
-		if (problem.getName().contains("E-"))
-		{ }
-//			visualMemoryIO.Record(problem);
-//    	if (!problem.hasVerbal())
-//    		return SolveVisually(problem);
-
 		if (problem.getProblemType().equals("2x2"))
 			return this.SolveTwoByTwo(problem, 0, 1, 2, true);
 
 		if (problem.getProblemType().contains(("3x3"))) {
-//			VisualMemoryIO visualMemoryIO = new VisualMemoryIO();
 //			visualMemoryIO.Record(problem);
-			visualMemoryIO.Record(problem);
 			return this.SolveVisually(problem);
 		}
 
@@ -75,6 +67,9 @@ public class Agent {
 			//DONT FORGET TO TURN THIS ON!!!!!!!
 //			return answer;
 		}
+
+		if (problem.getName().contains("D-06"))
+			System.out.println();
 
 		MatrixManipulator matrixManipulator = new MatrixManipulator(liquidProblemFigures);
 		ArrayList<Relationship> relationships = matrixManipulator.GetRelationships();

@@ -1,11 +1,8 @@
 package ravensproject;
 
-import com.sun.rowset.internal.Row;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 
 /**
  * Created by eriojasn on 11/19/15.
@@ -14,16 +11,17 @@ public class MatrixManipulator {
     public ArrayList<ArrayList<LiquidImage>> rows;
     public ArrayList<ArrayList<LiquidImage>> columns;
 
-    private ArrayList<RowRelationship> allPossibleRows;
+    private ArrayList<SetRelationship> allPossibleRows;
+    private ArrayList<SetRelationship> allPossibleColumns;
     public ArrayList<LiquidImage> matrix;
     private int N;
     public MatrixManipulator(ArrayList<LiquidImage> matrix)
     {
         this.allPossibleRows = new ArrayList<>();
+        this.allPossibleColumns = new ArrayList<>();
         this.N = (int)Math.sqrt((double)matrix.size() + 1);
         this.columns = this.GetColumns(matrix);
         this.matrix = ArrangeMatrix(matrix);
-        this.rows = this.GetRows(this.matrix);
         this.columns = this.GetColumns(this.matrix);
     }
 
@@ -31,12 +29,13 @@ public class MatrixManipulator {
     {
         ArrayList<LiquidImage> arrangedMatrix = new ArrayList<>();
 
-        FindPermutations(columns, new LiquidImage[columns.size()], 0);
-        Collections.sort(allPossibleRows, new RowRelationshipComparator());
+        // Get all possible set combinations
+        FindPermutations(columns, new LiquidImage[columns.size()], 0, true);
+        Collections.sort(allPossibleRows, new SetRelationshipComparator());
 
-        for (RowRelationship row : allPossibleRows)
+        for (SetRelationship row : allPossibleRows)
         {
-            ArrayList<LiquidImage> tempRow = row.row;
+            ArrayList<LiquidImage> tempRow = row.set;
             boolean found = false;
             for (LiquidImage element : tempRow)
                 for (LiquidImage matrixElement: arrangedMatrix)
@@ -49,12 +48,59 @@ public class MatrixManipulator {
 
         // Using ArrayList instead of HashSet to preserve order
         ArrayList<LiquidImage> missingElements = new ArrayList<>();
-        for (RowRelationship row : allPossibleRows)
-            for (LiquidImage element : row.row)
+        for (SetRelationship row : allPossibleRows)
+            for (LiquidImage element : row.set)
                 if (!arrangedMatrix.contains(element) && !missingElements.contains(element)) missingElements.add(element);
 
         for (LiquidImage missingElement : missingElements)
             arrangedMatrix.add(missingElement);
+
+        this.rows = this.GetRows(arrangedMatrix);
+        FindPermutations(rows, new LiquidImage[rows.size()], 0, false);
+        Collections.sort(allPossibleColumns, new SetRelationshipComparator());
+
+        LiquidImage[] tempArrangedMatrix = new LiquidImage[(N * N) - 1];
+        int counter = 0;
+        int index = 0;
+        for (SetRelationship column : allPossibleColumns)
+        {
+            ArrayList<LiquidImage> tempColumn = column.set;
+            boolean found = false;
+            for (LiquidImage element : tempColumn)
+                for (LiquidImage matrixElement : tempArrangedMatrix)
+                    if (matrixElement != null && element.name.equals(matrixElement.name)) {
+                        found = true;
+                        break;
+                    }
+
+            if (!found) {
+                for (LiquidImage element : tempColumn) {
+                    tempArrangedMatrix[index] = element;
+                    index += N;
+                }
+                counter++;
+                index = counter;
+            }
+        }
+
+        missingElements = new ArrayList<>();
+        for (SetRelationship column : allPossibleColumns)
+            for (LiquidImage element : column.set)
+                if (!Arrays.asList(tempArrangedMatrix).contains(element) && !missingElements.contains(element)) missingElements.add(element);
+
+        boolean added = false;
+        for (LiquidImage missingElement : missingElements) {
+            added = false;
+            for (int i = 0; i < tempArrangedMatrix.length; i++) {
+                if (added) continue;
+                if (tempArrangedMatrix[i] == null) {
+                    tempArrangedMatrix[i] = missingElement;
+                    added = true;
+                }
+            }
+        }
+
+        arrangedMatrix = new ArrayList<>(Arrays.asList(tempArrangedMatrix));
 
         return arrangedMatrix;
     }
@@ -86,15 +132,18 @@ public class MatrixManipulator {
         return relationships;
     }
 
-    private void FindPermutations(ArrayList<ArrayList<LiquidImage>> columns, LiquidImage[] row, int column) {
-       for (LiquidImage element : columns.get(column)) {
-           row[column] = element;
-           if (column != columns.size() - 1) FindPermutations(columns, row, column + 1);
+    private void FindPermutations(ArrayList<ArrayList<LiquidImage>> set, LiquidImage[] combo, int index, boolean rows) {
+       for (LiquidImage element : set.get(index)) {
+           combo[index] = element;
+           if (index != set.size() - 1) FindPermutations(set, combo, index + 1, rows);
            else {
-               LiquidImage[] rowToBeAdded = new LiquidImage[columns.size()];
-               System.arraycopy(row, 0, rowToBeAdded, 0, row.length);
-               RowRelationship temp = new RowRelationship(new ArrayList<LiquidImage>(Arrays.asList(row)));
-               allPossibleRows.add(temp);
+               LiquidImage[] comboToBeAdded = new LiquidImage[set.size()];
+               System.arraycopy(combo, 0, comboToBeAdded, 0, combo.length);
+               SetRelationship temp = new SetRelationship(new ArrayList<LiquidImage>(Arrays.asList(combo)));
+               if (rows)
+                   allPossibleRows.add(temp);
+               else
+                   allPossibleColumns.add(temp);
            }
        }
     }
