@@ -65,7 +65,7 @@ public class Agent {
 			//DONT FORGET TO TURN THIS ON!!!!!!!
 			//DONT FORGET TO TURN THIS ON!!!!!!!
 			//DONT FORGET TO TURN THIS ON!!!!!!!
-//			return answer;
+			return answer;
 		}
 
 		if (problem.getName().contains("D-06"))
