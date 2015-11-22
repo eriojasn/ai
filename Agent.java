@@ -10,20 +10,117 @@ public class Agent {
     public Agent() { }
 
     public int Solve(RavensProblem problem) {
-		VisualMemoryIO visualMemoryIO = new VisualMemoryIO();
-
 		if (problem.getProblemType().equals("2x2"))
 			return this.SolveTwoByTwo(problem, 0, 1, 2, true);
 
 		if (problem.getProblemType().contains(("3x3"))) {
-//			visualMemoryIO.Record(problem);
-			return this.SolveVisually(problem);
+			if (problem.getName().contains("D"))
+                return this.SolveD(problem);
+			else
+				return this.SolveVisually(problem);
 		}
 
 		return -1;
     }
 
 	private int SolveVisually(RavensProblem problem)
+	{
+		ProblemExtractor problemExtractor = new ProblemExtractor(problem);
+		ArrayList<RavensFigure> problemFigures = problemExtractor.GetProblemFigures();
+		ArrayList<LiquidImage> liquidProblemFigures = LiquidImage.ConvertFigures(problemFigures);
+
+		VisualMemoryIO visualMemoryIO = new VisualMemoryIO();
+		ArrayList<ArrayList<LiquidImage>> memoryProblems = visualMemoryIO.ReadMemory();
+
+		Rememberer rememberer = new Rememberer();
+		ArrayList<Relationship> memoryRelationships = rememberer.Remember(memoryProblems, liquidProblemFigures);
+
+		ArrayList<Integer> plausibleProblems = new ArrayList<>();
+		if (memoryRelationships.get(0).differencePercentage < .1) {
+			for (Relationship memoryRelationship : memoryRelationships)
+				if (memoryRelationship.differencePercentage <= memoryRelationships.get(0).differencePercentage)
+					plausibleProblems.add(memoryRelationship.problemNumber);
+
+			ArrayList<LiquidImage> solutionProblem = memoryProblems.get(MostCommonInt(plausibleProblems));
+			LiquidImage solutionFigure = solutionProblem.get(solutionProblem.size() - 1);
+			int answer = CompareProposedAnswer(solutionFigure, problemExtractor);
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+			//DONT FORGET TO TURN THIS ON!!!!!!!
+//			return answer;
+		}
+
+		CEMatrixManipulator matrixManipulator = new CEMatrixManipulator(liquidProblemFigures);
+		ArrayList<Relationship> relationships = matrixManipulator.GetRelationships();
+		liquidProblemFigures = matrixManipulator.matrix;
+
+		// Testing...
+		// Apply last operation to cell above answer cell, let that be tentative answer...
+		LiquidImage tentativeAnswer;
+		if (problem.getProblemType().contains("3"))
+			tentativeAnswer = ArrayOperator.ApplyOperation(liquidProblemFigures.get(5), relationships.get(relationships.size() - 2).operation);
+		else
+			tentativeAnswer = ArrayOperator.ApplyOperation(liquidProblemFigures.get(1), relationships.get(relationships.size() - 2).operation);
+
+		LiquidImage.DrawLiquidImage(tentativeAnswer, "tentAnswer-" + problem.getName());
+
+		ArrayList<RavensFigure> answerFigures = problemExtractor.GetAnswerFigures();
+		ArrayList<LiquidImage> liquidAnswerFigures = new ArrayList<>();
+
+		for (RavensFigure answerFigure : answerFigures)
+			liquidAnswerFigures.add(new LiquidImage(answerFigure));
+
+		double minDifference = 100;
+		double minBlackDifference = 100;
+		int answer = -1;
+		int answerIndex = 1;
+		for (LiquidImage liquidAnswerFigure : liquidAnswerFigures)
+		{
+			Relationship temp = new Relationship(tentativeAnswer, liquidAnswerFigure);
+			if (temp.differencePercentage < minDifference) {
+				minDifference = temp.differencePercentage;
+				answer = answerIndex;
+			}
+
+			if (temp.blackDifferencePercentage < minBlackDifference)
+			{
+				minBlackDifference = temp.blackDifferencePercentage;
+			}
+
+			answerIndex++;
+		}
+
+		double cSkipValue = 11.22;
+		double eSkipValue = 4.554;
+
+		if (problem.getName().contains("C") && minBlackDifference >= cSkipValue)
+			return -1;
+
+		if (problem.getName().contains("E") && minBlackDifference >= eSkipValue)
+			return -1;
+
+		return answer;
+	}
+
+	private int SolveD(RavensProblem problem)
 	{
 		ProblemExtractor problemExtractor = new ProblemExtractor(problem);
 		ArrayList<RavensFigure> problemFigures = problemExtractor.GetProblemFigures();
@@ -160,9 +257,6 @@ public class Agent {
 		int operationDifference = ArrayOperator.Difference(answerRelationships.get(0).operation, answerRelationships.get(1).operation);
 
 //		double[] skipValues = VisualMemoryIO.GetSkipValues();
-		double cSkipValue = 11.22;
-		double dSkipValue = 14.62;
-		double eSkipValue = 4.55;
 
 /*		if (problem.getName().contains("C") && minBlackDifference >= cSkipValue)
 			return -1;
