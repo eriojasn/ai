@@ -68,17 +68,24 @@ public class Agent {
 //			return answer;
 		}
 
+		if (problem.getName().contains("C-08"))
+			System.out.println();
+
 		MatrixManipulator matrixManipulator = new MatrixManipulator(liquidProblemFigures);
 		ArrayList<Relationship> relationships = matrixManipulator.GetRelationships();
-		liquidProblemFigures = matrixManipulator.matrix;
+		LiquidImage[][] arrangedProblemFigures = matrixManipulator.matrix;
 
 		// Testing...
 		// Apply last operation to cell above answer cell, let that be tentative answer...
 		LiquidImage tentativeAnswer;
-		if (problem.getProblemType().contains("3"))
-			tentativeAnswer = ArrayOperator.ApplyOperation(liquidProblemFigures.get(5), relationships.get(relationships.size() - 2).operation);
-		else
-			tentativeAnswer = ArrayOperator.ApplyOperation(liquidProblemFigures.get(1), relationships.get(relationships.size() - 2).operation);
+		Relationship tempRel = new Relationship(arrangedProblemFigures[1][1], arrangedProblemFigures[2][1]);
+
+		tentativeAnswer = ArrayOperator.ApplyOperation(arrangedProblemFigures[1][2], tempRel.operation);
+
+//		if (problem.getProblemType().contains("3"))
+//			tentativeAnswer = ArrayOperator.ApplyOperation(liquidProblemFigures.get(5), relationships.get(relationships.size() - 2).operation);
+//		else
+//			tentativeAnswer = ArrayOperator.ApplyOperation(liquidProblemFigures.get(1), relationships.get(relationships.size() - 2).operation);
 
 		LiquidImage.DrawLiquidImage(tentativeAnswer, "tentAnswer-" + problem.getName());
 

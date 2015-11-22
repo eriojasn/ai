@@ -3,6 +3,7 @@ package ravensproject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 /**
  * Created by eriojasn on 11/19/15.
@@ -13,7 +14,7 @@ public class MatrixManipulator {
 
     private ArrayList<SetRelationship> allPossibleRows;
     private ArrayList<SetRelationship> allPossibleColumns;
-    public ArrayList<LiquidImage> matrix;
+    public LiquidImage[][] matrix;
     private int N;
     public MatrixManipulator(ArrayList<LiquidImage> matrix)
     {
@@ -22,12 +23,13 @@ public class MatrixManipulator {
         this.N = (int)Math.sqrt((double)matrix.size() + 1);
         this.columns = this.GetColumns(matrix);
         this.matrix = ArrangeMatrix(matrix);
-        this.columns = this.GetColumns(this.matrix);
+        this.columns = this.GetColumns(matrix);
     }
 
-    private ArrayList<LiquidImage> ArrangeMatrix(ArrayList<LiquidImage> matrix)
+    private LiquidImage[][] ArrangeMatrix(ArrayList<LiquidImage> matrix)
     {
         ArrayList<LiquidImage> arrangedMatrix = new ArrayList<>();
+        LiquidImage[][] arrangedMatrixArr = new LiquidImage[N][N];
 
         // Get all possible set combinations
         FindPermutations(columns, new LiquidImage[columns.size()], 0, true);
@@ -46,63 +48,135 @@ public class MatrixManipulator {
                     arrangedMatrix.add(element);
         }
 
+        int arrayListCounter = 0;
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++) {
+                if (arrayListCounter >= arrangedMatrix.size())
+                {
+                    arrangedMatrixArr[i][j] = null;
+                    continue;
+                }
+                arrangedMatrixArr[i][j] = arrangedMatrix.get(arrayListCounter);
+                arrayListCounter++;
+            }
+
         // Using ArrayList instead of HashSet to preserve order
         ArrayList<LiquidImage> missingElements = new ArrayList<>();
         for (SetRelationship row : allPossibleRows)
             for (LiquidImage element : row.set)
                 if (!arrangedMatrix.contains(element) && !missingElements.contains(element)) missingElements.add(element);
 
-        for (LiquidImage missingElement : missingElements)
-            arrangedMatrix.add(missingElement);
+        ArrayList<ArrayList<LiquidImage>> arrangedMatrixRows = this.GetRows(arrangedMatrix);
+        ArrayList<LiquidImage> lastRow = arrangedMatrixRows.get(arrangedMatrixRows.size() - 1);
+        ArrayList<Relationship> missingRelationships = this.GetLastRow2MissingElementsRelationships(lastRow, missingElements);
 
-        this.rows = this.GetRows(arrangedMatrix);
+        for (LiquidImage firstMissingElement : missingElements) {
+            int minDifference = 9999999;
+            int minIndex = 0;
+            for (int i = 0; i < N; i++) {
+                if (arrangedMatrixArr[N - 1][i] == null)
+                {
+                    int tempDifference = ArrayOperator.Difference(firstMissingElement.liquidImg, arrangedMatrixArr[N - 2][i].liquidImg);
+                    if (tempDifference < minDifference)
+                    {
+                        minDifference = tempDifference;
+                        minIndex = i;
+                    }
+                }
+            }
+
+            arrangedMatrixArr[N - 1][minIndex] = firstMissingElement;
+        }
+
+        arrangedMatrix = new ArrayList<>();
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++)
+            {
+                if (arrangedMatrixArr[i][j] != null)
+                   arrangedMatrix.add(arrangedMatrixArr[i][j]);
+                else
+                    arrangedMatrix.add(null);
+            }
+
+        this.rows = this.GetRows(arrangedMatrixArr); // DEBUG HERE
         FindPermutations(rows, new LiquidImage[rows.size()], 0, false);
         Collections.sort(allPossibleColumns, new SetRelationshipComparator());
 
+        LiquidImage[][] secondArrangedMatrixArr = new LiquidImage[N][N];
         LiquidImage[] tempArrangedMatrix = new LiquidImage[(N * N) - 1];
-        int counter = 0;
         int index = 0;
         for (SetRelationship column : allPossibleColumns)
         {
             ArrayList<LiquidImage> tempColumn = column.set;
             boolean found = false;
             for (LiquidImage element : tempColumn)
-                for (LiquidImage matrixElement : tempArrangedMatrix)
-                    if (matrixElement != null && element.name.equals(matrixElement.name)) {
-                        found = true;
-                        break;
-                    }
+                for (int i = 0; i < N; i ++)
+                    for (int j = 0; j < N; j++)
+                        if (secondArrangedMatrixArr[i][j] != null && element.name.equals(secondArrangedMatrixArr[i][j].name)) {
+                            found = true;
+                            break;
+                        }
 
             if (!found) {
+                int miniIndex = 0;
                 for (LiquidImage element : tempColumn) {
-                    tempArrangedMatrix[index] = element;
-                    index += N;
+                    secondArrangedMatrixArr[miniIndex][index] = element;
+                    miniIndex++;
                 }
-                counter++;
-                index = counter;
+                index++;
+                if (index == N - 1) break;
             }
         }
 
-        missingElements = new ArrayList<>();
+        HashSet<LiquidImage> secondMissingElements = new HashSet<>();
         for (SetRelationship column : allPossibleColumns)
-            for (LiquidImage element : column.set)
-                if (!Arrays.asList(tempArrangedMatrix).contains(element) && !missingElements.contains(element)) missingElements.add(element);
+            for (LiquidImage element : column.set) {
+                boolean found = false;
+                for (int i = 0; i < N; i++) {
+                    for (int j = 0; j < N; j++) {
+                        if (secondArrangedMatrixArr[i][j] == element) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) break;
+                }
+                if (!found)
+                    secondMissingElements.add(element);
+            }
 
-        boolean added = false;
-        for (LiquidImage missingElement : missingElements) {
-            added = false;
-            for (int i = 0; i < tempArrangedMatrix.length; i++) {
-                if (added) continue;
-                if (tempArrangedMatrix[i] == null) {
-                    tempArrangedMatrix[i] = missingElement;
-                    added = true;
+        for (LiquidImage secondMissingElement : secondMissingElements) {
+            int minDifference = 9999999;
+            int minIndex = 0;
+            for (int i = 0; i < N; i++) {
+                if (secondArrangedMatrixArr[i][N - 1] == null)
+                {
+                    int tempDifference = ArrayOperator.Difference(secondMissingElement.liquidImg, secondArrangedMatrixArr[i][N - 2].liquidImg);
+                    if (tempDifference < minDifference)
+                    {
+                        minDifference = tempDifference;
+                        minIndex = i;
+                    }
                 }
             }
+
+            secondArrangedMatrixArr[minIndex][N - 1] = secondMissingElement;
         }
 
-        arrangedMatrix = new ArrayList<>(Arrays.asList(tempArrangedMatrix));
+        return secondArrangedMatrixArr;
+    }
 
-        return arrangedMatrix;
+    private ArrayList<Relationship> GetLastRow2MissingElementsRelationships(ArrayList<LiquidImage> set, ArrayList<LiquidImage> missingElements)
+    {
+        ArrayList<Relationship> result = new ArrayList<>();
+
+        for (LiquidImage setElement : set)
+            for (LiquidImage missingElement : missingElements)
+                result.add(new Relationship(setElement, missingElement));
+
+        Collections.sort(result, new RelationshipComparator());
+
+        return result;
     }
 
     public ArrayList<Relationship> GetRelationships()
@@ -155,12 +229,27 @@ public class MatrixManipulator {
         int index = 0;
         for (int i = 0; i < N; i++)
         {
+            if (index == matrix.size()) break;
             rows.add(new ArrayList<LiquidImage>());
             for (int j = 0; j < N; j++)
             {
-                if (index == (N * N - 1)) break;
                 rows.get(i).add(matrix.get(index));
                 index++;
+            }
+        }
+
+        return rows;
+    }
+
+    private ArrayList<ArrayList<LiquidImage>> GetRows(LiquidImage[][] matrix)
+    {
+        ArrayList<ArrayList<LiquidImage>> rows = new ArrayList<>();
+
+        for (int i = 0; i < N; i++) {
+            rows.add(new ArrayList<LiquidImage>());
+            for (int j = 0; j < N; j++) {
+                if (matrix[i][j] != null)
+                    rows.get(i).add(matrix[i][j]);
             }
         }
 
