@@ -52,6 +52,18 @@ public class LiquidImage {
         catch (Exception e) { }
     }
 
+    public static int GetBlackPixels(LiquidImage liquidImage)
+    {
+        int blackPixels = 0;
+        boolean[] temp = liquidImage.liquidImg;
+        for (boolean element : temp)
+            if (element)
+                blackPixels++;
+
+        liquidImage.blackPixels = blackPixels;
+        return blackPixels;
+    }
+
     public static ArrayList<LiquidImage> ConvertFigures (ArrayList<RavensFigure> figures)
     {
         ArrayList<LiquidImage> liquidFigures = new ArrayList<>();

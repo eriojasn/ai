@@ -10,6 +10,9 @@ public class VisualMemoryIO {
     private static final String FIGURE_DELIM = "f";
     private static final String SOLUTION_DELIM = "f";
     private static final String FILE_NAME = "visualmemory.txt";
+    private static final String SKIP_VALUE_FILE_NAME = "skipvalues.txt";
+    private static final String WIN_SKIP_VALUE_FILE_NAME = "winskipvalues.txt";
+    private static final String HI_SCORE_FILE_NAME = "highscore.txt";
 
     public VisualMemoryIO() { }
 
@@ -64,6 +67,8 @@ public class VisualMemoryIO {
                     bufferedWriter.write("1");
                 else
                     bufferedWriter.write("0");
+
+                bufferedWriter.close();
             }
             catch (Exception e) { e.printStackTrace(); }
         }
@@ -75,6 +80,102 @@ public class VisualMemoryIO {
         list.removeAll(Arrays.asList("", null));
 
         return list;
+    }
+
+    public static double GetHighScore()
+    {
+        FileReader hiScoreFile = VisualMemoryIO.GetFile(VisualMemoryIO.HI_SCORE_FILE_NAME);
+        BufferedReader bufferedReader = new BufferedReader(hiScoreFile);
+        String hiScore = "";
+        try {
+            hiScore = bufferedReader.readLine();
+            bufferedReader.close();
+        }
+        catch (Exception e) {}
+
+        double highScore = Double.parseDouble(hiScore);
+
+        return highScore;
+    }
+
+    public static void WriteHighScore(double score)
+    {
+        BufferedWriter bufferedWriter = null;
+
+        try {
+            bufferedWriter = new BufferedWriter(new FileWriter(HI_SCORE_FILE_NAME, false));
+            bufferedWriter.write(String.valueOf(score));
+            bufferedWriter.close();
+        }
+        catch (Exception e)
+        {}
+    }
+
+    public static double[] GetSkipValues()
+    {
+        FileReader skipValuesFile = GetFile(SKIP_VALUE_FILE_NAME);
+        BufferedReader bufferedReader = new BufferedReader(skipValuesFile);
+        String skipValuesString = "";
+        try {
+            skipValuesString = bufferedReader.readLine();
+            bufferedReader.close();
+            skipValuesFile.close();
+        }
+        catch (Exception e) {}
+
+        String[] skipValuesSplit = skipValuesString.split(",");
+
+        double[] skipValues = new double[skipValuesSplit.length];
+        for (int i = 0; i < skipValues.length; i++)
+            skipValues[i] = Double.parseDouble(skipValuesSplit[i]);
+
+        return skipValues;
+    }
+
+    public static void WriteSkipValues(double c, double d, double e)
+    {
+        BufferedWriter bufferedWriter = null;
+
+        try {
+            bufferedWriter = new BufferedWriter(new FileWriter(SKIP_VALUE_FILE_NAME, false));
+            bufferedWriter.write(String.valueOf(c) + "," + String.valueOf(d) + "," + String.valueOf(e));
+            bufferedWriter.close();
+        }
+        catch (Exception ex)
+        {}
+    }
+
+    public static void WriteWinSkipValues(double c, double d, double e)
+    {
+        BufferedWriter bufferedWriter = null;
+
+        try {
+            bufferedWriter = new BufferedWriter(new FileWriter(WIN_SKIP_VALUE_FILE_NAME, false));
+            bufferedWriter.write(String.valueOf(c) + "," + String.valueOf(d) + "," + String.valueOf(e));
+            bufferedWriter.close();
+        }
+        catch (Exception ex)
+        {}
+    }
+
+    public static FileReader GetFile (String filePath)
+    {
+        File file = new File(filePath);
+        if (!file.exists())
+            filePath = "ravensproject/" + filePath;
+        file = new File(filePath);
+        if (!file.exists())
+            filePath = "../" + FILE_NAME;
+        file = new File(filePath);
+        if(!file.exists())
+            filePath = "../ravensproject/" + FILE_NAME;
+
+        FileReader fileReader = null;
+        try {
+           fileReader = new FileReader(filePath);
+        } catch (Exception e) {}
+
+        return fileReader;
     }
 
     public ArrayList<ArrayList<LiquidImage>> ReadMemory()
@@ -124,6 +225,8 @@ public class VisualMemoryIO {
 
                 allProblems.add(allFigures);
             }
+
+            bufferedReader.close();
         }
         catch (Exception e) { }
 

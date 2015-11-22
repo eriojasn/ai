@@ -65,11 +65,8 @@ public class Agent {
 			//DONT FORGET TO TURN THIS ON!!!!!!!
 			//DONT FORGET TO TURN THIS ON!!!!!!!
 			//DONT FORGET TO TURN THIS ON!!!!!!!
-			return answer;
+//			return answer;
 		}
-
-		if (problem.getName().contains("D-06"))
-			System.out.println();
 
 		MatrixManipulator matrixManipulator = new MatrixManipulator(liquidProblemFigures);
 		ArrayList<Relationship> relationships = matrixManipulator.GetRelationships();
@@ -92,6 +89,7 @@ public class Agent {
 			liquidAnswerFigures.add(new LiquidImage(answerFigure));
 
 		double minDifference = 100;
+		double minBlackDifference = 100;
 		int answer = -1;
 		int answerIndex = 1;
 		for (LiquidImage liquidAnswerFigure : liquidAnswerFigures)
@@ -102,10 +100,26 @@ public class Agent {
 				answer = answerIndex;
 			}
 
+			if (temp.blackDifferencePercentage < minBlackDifference)
+			{
+				minBlackDifference = temp.blackDifferencePercentage;
+			}
+
 			answerIndex++;
 		}
 
-		if (minDifference >= 10)
+		double[] skipValues = VisualMemoryIO.GetSkipValues();
+		double cSkipValue = skipValues[0];
+		double dSkipValue = skipValues[1];
+		double eSkipValue = skipValues[2];
+
+		if (problem.getName().contains("C") && minBlackDifference >= cSkipValue)
+			return -1;
+
+		if (problem.getName().contains("D") && minBlackDifference >= dSkipValue)
+			return -1;
+
+		if (problem.getName().contains("E") && minBlackDifference >= eSkipValue)
 			return -1;
 
 		return answer;

@@ -37,6 +37,21 @@ public class ArrayOperator {
         return difference;
     }
 
+    public static int BlackDifference (boolean[] a, boolean[] b)
+    {
+        int difference = 0;
+
+        int index = 0;
+        for (boolean aBool : a) {
+            if (aBool != b[index] && aBool)
+                difference++;
+
+            index++;
+        }
+
+        return difference;
+    }
+
     public static LiquidImage ApplyOperation (LiquidImage operated, boolean[] operation)
     {
         LiquidImage newImage = new LiquidImage();
