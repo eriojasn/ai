@@ -68,7 +68,7 @@ public class Agent {
 //			return answer;
 		}
 
-		if (problem.getName().contains("C-08"))
+		if (problem.getName().contains("E-01"))
 			System.out.println();
 
 		MatrixManipulator matrixManipulator = new MatrixManipulator(liquidProblemFigures);
@@ -78,9 +78,51 @@ public class Agent {
 		// Testing...
 		// Apply last operation to cell above answer cell, let that be tentative answer...
 		LiquidImage tentativeAnswer;
-		Relationship tempRel = new Relationship(arrangedProblemFigures[1][1], arrangedProblemFigures[2][1]);
+		int xNull = 0;
+		int yNull = 0;
+		for (int i = 0; i < arrangedProblemFigures.length; i++)
+			for (int j = 0; j < arrangedProblemFigures.length; j++)
+			{
+				if (arrangedProblemFigures[i][j] == null)
+				{
+					xNull = i;
+					yNull = j;
+				}
+			}
 
-		tentativeAnswer = ArrayOperator.ApplyOperation(arrangedProblemFigures[1][2], tempRel.operation);
+		ArrayList<Relationship> answerRelationships = new ArrayList<>();
+		LiquidImage toApply = new LiquidImage();
+		if (xNull == arrangedProblemFigures.length - 1)
+		{
+			toApply = arrangedProblemFigures[xNull - 1][yNull];
+			for (int i = 0; i < arrangedProblemFigures.length; i++)
+			{
+				if (i != yNull)
+				{
+					Relationship temp = new Relationship(arrangedProblemFigures[arrangedProblemFigures.length - 2][i],
+							arrangedProblemFigures[arrangedProblemFigures.length - 1][i]);
+					answerRelationships.add(temp);
+				}
+			}
+		}
+		else
+		{
+			toApply = arrangedProblemFigures[yNull - 1][xNull];
+			for (int i = 0; i < arrangedProblemFigures.length; i++)
+			{
+				if (i != xNull)
+				{
+					Relationship temp = new Relationship(arrangedProblemFigures[i][arrangedProblemFigures.length - 2],
+							arrangedProblemFigures[i][arrangedProblemFigures.length - 1]);
+					answerRelationships.add(temp);
+				}
+			}
+		}
+
+
+		Relationship tempRel = answerRelationships.get(0);
+
+		tentativeAnswer = ArrayOperator.ApplyOperation(toApply, tempRel.operation);
 
 //		if (problem.getProblemType().contains("3"))
 //			tentativeAnswer = ArrayOperator.ApplyOperation(liquidProblemFigures.get(5), relationships.get(relationships.size() - 2).operation);
@@ -115,19 +157,21 @@ public class Agent {
 			answerIndex++;
 		}
 
-		double[] skipValues = VisualMemoryIO.GetSkipValues();
-		double cSkipValue = skipValues[0];
-		double dSkipValue = skipValues[1];
-		double eSkipValue = skipValues[2];
+		int operationDifference = ArrayOperator.Difference(answerRelationships.get(0).operation, answerRelationships.get(1).operation);
 
-		if (problem.getName().contains("C") && minBlackDifference >= cSkipValue)
+//		double[] skipValues = VisualMemoryIO.GetSkipValues();
+		double cSkipValue = 11.22;
+		double dSkipValue = 14.62;
+		double eSkipValue = 4.55;
+
+/*		if (problem.getName().contains("C") && minBlackDifference >= cSkipValue)
 			return -1;
 
 		if (problem.getName().contains("D") && minBlackDifference >= dSkipValue)
 			return -1;
 
 		if (problem.getName().contains("E") && minBlackDifference >= eSkipValue)
-			return -1;
+			return -1;*/
 
 		return answer;
 	}
