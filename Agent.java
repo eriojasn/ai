@@ -257,7 +257,10 @@ public class Agent {
 		int operationDifference = ArrayOperator.Difference(answerRelationships.get(0).operation, answerRelationships.get(1).operation);
 
 //		double[] skipValues = VisualMemoryIO.GetSkipValues();
+		double skipValue = 20;
 
+		if (minBlackDifference >= skipValue)
+			return -1;
 /*		if (problem.getName().contains("C") && minBlackDifference >= cSkipValue)
 			return -1;
 
