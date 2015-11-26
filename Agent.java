@@ -44,28 +44,8 @@ public class Agent {
 			ArrayList<LiquidImage> solutionProblem = memoryProblems.get(MostCommonInt(plausibleProblems));
 			LiquidImage solutionFigure = solutionProblem.get(solutionProblem.size() - 1);
 			int answer = CompareProposedAnswer(solutionFigure, problemExtractor);
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-//			return answer;
+
+			return answer;
 		}
 
 		CEMatrixManipulator matrixManipulator = new CEMatrixManipulator(liquidProblemFigures);
@@ -141,28 +121,8 @@ public class Agent {
 			ArrayList<LiquidImage> solutionProblem = memoryProblems.get(MostCommonInt(plausibleProblems));
 			LiquidImage solutionFigure = solutionProblem.get(solutionProblem.size() - 1);
 			int answer = CompareProposedAnswer(solutionFigure, problemExtractor);
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-			//DONT FORGET TO TURN THIS ON!!!!!!!
-//			return answer;
+
+			return answer;
 		}
 
 		if (problem.getName().contains("E-01"))
